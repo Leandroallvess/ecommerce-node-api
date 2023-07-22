@@ -1,0 +1,25 @@
+{
+  "name": "ecommerce-node-api",
+  "version": "1.0.0",
+  "description": "ecomece b2c",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
+  },
+  "keywords": [
+    "varejo",
+    "vendas"
+  ],
+  "author": "Leandro Alves",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "sucrase": "^3.32.0",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "vitest": "^0.33.0"
+  }
+}
