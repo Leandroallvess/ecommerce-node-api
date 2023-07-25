@@ -1,18 +1,20 @@
-import { Categoria } from "../domain/categoria.entity";
-import { ICategoria, RecuperarCategoriaProps } from "../domain/categoria.types";
+import { Categoria } from "../domain/categoria/categoria.entity";
+import {
+  ICategoria,
+  RecuperarCategoriaProps,
+} from "../domain/categoria/categoria.types";
 
 class CategoriaMap {
-    public static toDIO(categoria: Categoria): ICategoria{
-        return{
-            id: categoria.id,
-            nome: categoria.nome
-        }
+  public static toDIO(categoria: Categoria): ICategoria {
+    return {
+      id: categoria.id,
+      nome: categoria.nome,
+    };
+  }
 
-    }
-
-    public static toDomain(categoria: RecuperarCategoriaProps): Categoria{
-        return Categoria.recuperar(categoria);
-    }
+  public static toDomain(categoria: RecuperarCategoriaProps): Categoria {
+    return Categoria.recuperar(categoria);
+  }
 }
 
-export { CategoriaMap}
+export { CategoriaMap };
