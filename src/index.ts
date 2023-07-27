@@ -69,14 +69,16 @@ try {
   //Criando um Produto//
   /////////////////////////
 
-  let categoria = Categoria.criar({ nome: "cama, mesa e banho" });
+  let cama = Categoria.criar({ nome: "cama" });
+  let mesa = Categoria.criar({ nome: " mesa " });
+  let banho = Categoria.criar({ nome: " banho" });
 
   let produto: Produto;
   produto = Produto.criar({
     nome: "colcha",
     preco: 80,
     descricao: "",
-    categoria,
+    categoria: [cama, mesa, banho],
   });
   console.log(produto);
 

@@ -7,7 +7,7 @@ interface IProduto {
   nome: string;
   preco: number;
   descricao: string;
-  categoria: Categoria;
+  categoria: Categoria[];
 }
 
 type CriarProdutoProps = Omit<IProduto, "id">;

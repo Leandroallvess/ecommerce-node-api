@@ -1,9 +1,12 @@
 import { Categoria } from "../categoria/categoria.entity";
 import {
-  CategoriaInvalida,
+  DescricaoNulo,
+  NomeDescricaoTamanhoMaximoInvalido,
+  NomeDescricaoTamanhoMinimoInvalido,
   NomeProdutoNuloOuIndefinido,
   NomeProdutoTamanhoMaximoInvalido,
   NomeProdutoTamanhoMinimoInvalido,
+  NumeroCategoriaInvalido,
   PrecoInvalido,
 } from "./produto.exception";
 import { CriarProdutoProps, IProduto } from "./produto.types";
@@ -20,7 +23,7 @@ class Produto extends Entity<IProduto> implements IProduto {
   private _nome: string;
   private _preco: number;
   private _descricao: string;
-  private _categoria: Categoria;
+  private _categoria: Categoria[];
 
   ///////////////
   //Gets e Sets//
@@ -35,7 +38,7 @@ class Produto extends Entity<IProduto> implements IProduto {
       throw new NomeProdutoNuloOuIndefinido();
     }
 
-    if (value.trim().length < 3) {
+    if (value.trim().length < 5) {
       throw new NomeProdutoTamanhoMinimoInvalido();
     }
 
@@ -50,7 +53,7 @@ class Produto extends Entity<IProduto> implements IProduto {
     return this._preco;
   }
   private set preco(value: number) {
-    if (typeof value !== "number") {
+    if (value < 0) {
       throw new PrecoInvalido();
     }
     this._preco = value;
@@ -60,17 +63,24 @@ class Produto extends Entity<IProduto> implements IProduto {
     return this._descricao;
   }
   private set descricao(value: string) {
+    if (value == null || value == undefined) {
+      throw new DescricaoNulo();
+    }
+    if (value.length < 10) {
+      throw new NomeDescricaoTamanhoMinimoInvalido();
+    }
+    if (value.length > 200) {
+      throw new NomeDescricaoTamanhoMaximoInvalido();
+    }
     this._descricao = value;
   }
 
-  public get categoria(): Categoria {
+  public get categoria(): Categoria[] {
     return this._categoria;
   }
-  private set categoria(value: Categoria) {
-    if (value instanceof Categoria) {
-      this._categoria = value;
-    } else {
-      throw new CategoriaInvalida();
+  private set categoria(value: Categoria[]) {
+    if (value.length < 1 || value.length > 3) {
+      throw new NumeroCategoriaInvalido();
     }
     this._categoria = value;
   }
