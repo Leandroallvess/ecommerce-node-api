@@ -13,9 +13,6 @@ import { CriarProdutoProps, IProduto } from "./produto.types";
 import { Entity } from "../../../../shered/domain/entity";
 
 class Produto extends Entity<IProduto> implements IProduto {
-  toDIO(): any {
-    throw new Error("Method not implemented.");
-  }
   ///////////////////////
   //Atributos de Classe//
   ///////////////////////
