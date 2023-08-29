@@ -1,4 +1,4 @@
-import { DomainException } from "../../../../shered/domain/DomainException";
+import { DomainException } from "shared/domain/DomainException";
 
 class CategoriaException extends DomainException {
   public constructor(

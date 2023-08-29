@@ -1,19 +1,39 @@
-import { describe, test, expect } from "vitest";
-import {
-  CriarCategoriaProps,
-  RecuperarCategoriaProps,
-} from "./categoria.types";
+import { faker } from "@faker-js/faker";
+import { IDEntityUUIDInvalid } from "shared/domain/DomainException";
+import { beforeAll, describe, expect, test } from "vitest";
 import { Categoria } from "./categoria.entity";
 import {
   NomeCategoriaTamanhoMaximoInvalido,
   NomeCategoriaTamanhoMinimoInvalido,
 } from "./categoria.exception";
-import { IDEntityUUIDInvalid } from "../../../../shered/domain/DomainException";
+import {
+  CriarCategoriaProps,
+  RecuperarCategoriaProps,
+} from "./categoria.types";
+
+let nomeCategoriaValido: string;
+let nomeCategoriaTamanhoMinimoInvalido: string;
+let nomeCategoriaTamanhoMaximoInvalido: string;
+let UUIDValido: string;
+let UUIDInvalido: string;
+
+beforeAll(async () => {
+  //Preencendo as variáveis com dados em conformidade com as restrições da regra de negócio
+  nomeCategoriaValido = faker.string.alpha({ length: { min: 3, max: 50 } });
+  nomeCategoriaTamanhoMinimoInvalido = faker.string.alpha({
+    length: { min: 0, max: 2 },
+  });
+  nomeCategoriaTamanhoMaximoInvalido = faker.string.alpha({
+    length: { min: 51, max: 51 },
+  });
+  UUIDValido = faker.string.uuid(); // Retorna um UUID v4
+  UUIDInvalido = faker.string.alpha({ length: { min: 1, max: 20 } });
+});
 
 describe("Entidade de Dominio da Categoria", () => {
   test("Deve Criar uma Categoria Válida", async () => {
     const categoriaValida: CriarCategoriaProps = {
-      nome: "cama",
+      nome: nomeCategoriaValido,
     };
 
     expect(Categoria.criar(categoriaValida)).to.be.instanceof(Categoria);
@@ -21,7 +41,7 @@ describe("Entidade de Dominio da Categoria", () => {
 
   test(" Nâo Deve Criar uma Categoria com Nome inVálida - tamanho minímo", async () => {
     const categoriainValida: CriarCategoriaProps = {
-      nome: "ca",
+      nome: nomeCategoriaTamanhoMinimoInvalido,
     };
 
     expect(() => Categoria.criar(categoriainValida)).toThrowError(
@@ -31,7 +51,7 @@ describe("Entidade de Dominio da Categoria", () => {
 
   test(" Nâo Deve Criar uma Categoria com Nome inVálida - tamanho maximo", async () => {
     const categoriainValida: CriarCategoriaProps = {
-      nome: "jhdfjhdgljnsçaljdgnasjglflgkslfljkjkjkjkjkjkjkjkjkjkjklkjllllllllllllllllllllllllllllllllllllllllllllllllllllsssssssssssssssskkkkkkkkkk",
+      nome: nomeCategoriaTamanhoMaximoInvalido,
     };
 
     expect(() => Categoria.criar(categoriainValida)).toThrowError(
@@ -44,8 +64,8 @@ describe("Entidade de Domínio: Categoria (Recuperar)", () => {
   test("Deve Recuperar Uma Categoria Válida", async () => {
     //Dado (Given)
     const categoriaValida: RecuperarCategoriaProps = {
-      id: "5edbc79d-b724-4a39-a29b-0bfb2386920a",
-      nome: "cama",
+      id: UUIDValido,
+      nome: nomeCategoriaValido,
     };
 
     //Quando (When) e Então (Then)
@@ -56,7 +76,7 @@ describe("Entidade de Domínio: Categoria (Recuperar)", () => {
     //Dado (Given)
     //Nome menor que três caracteres
     const categoriaIdInvalido: RecuperarCategoriaProps = {
-      id: "1234",
+      id: UUIDInvalido,
       nome: "cama",
     };
 
@@ -70,8 +90,8 @@ describe("Entidade de Domínio: Categoria (Recuperar)", () => {
     //Dado (Given)
     //Nome menor que três caracteres
     const categoriaNomeInvalido: RecuperarCategoriaProps = {
-      id: "5edbc79d-b724-4a39-a29b-0bfb2386920a",
-      nome: "ma",
+      id: UUIDValido,
+      nome: nomeCategoriaTamanhoMinimoInvalido,
     };
 
     //Quando (When) e Então (Then)
@@ -84,8 +104,8 @@ describe("Entidade de Domínio: Categoria (Recuperar)", () => {
     //Dado (Given)
     //Nome maior que 50 caracteres
     const categoriaNomeInvalido: RecuperarCategoriaProps = {
-      id: "5edbc79d-b724-4a39-a29b-0bfb2386920a",
-      nome: "123456789123456789123456789123456789123456789123456",
+      id: UUIDValido,
+      nome: nomeCategoriaTamanhoMaximoInvalido,
     };
 
     //Quando (When) e Então (Then)

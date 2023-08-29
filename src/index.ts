@@ -1,37 +1,36 @@
-import { Categoria } from "./modules/catalogo/domain/categoria/categoria.entity";
-import { CategoriaMap } from "./modules/catalogo/mappers/categoria.map";
-import { Produto } from "./modules/catalogo/domain/produto/produto.entity";
-import { DomainException } from "./shered/domain/DomainException";
-import { writeFile, readFile } from "fs";
+import { Categoria } from "@modules/catalogo/domain/categoria/categoria.entity";
+import { RecuperarCategoriaProps } from "@modules/catalogo/domain/categoria/categoria.types";
+import { CategoriaMap } from "@modules/catalogo/mappers/categoria.map";
+import { DomainException } from "shared/domain/DomainException";
+import { readFile, writeFile } from "fs";
 
 try {
-  /////////////////////////
-  //Criando uma Categoria//
-  /////////////////////////
+  ///////////////////
+  //Criar Categoria//
+  ///////////////////
 
   let categoria: Categoria;
-  categoria = Categoria.criar({ nome: "cama" });
+  categoria = Categoria.criar({ nome: "mesa" });
   console.log(categoria);
 
-  /////////////////////////////
-  //Recuperando uma Categoria//
-  /////////////////////////////
+  ///////////////////////
+  //Recuperar Categoria//
+  ///////////////////////
 
-  let propsCategoria = {
-    id: "5fac700e-2783-4682-99cf-0c9c1d9675b0",
-    nome: "mesa",
+  let propsCategoria: RecuperarCategoriaProps = {
+    id: "6ad12850-abe4-49fe-967e-ab915cce9b3a",
+    nome: "cama",
   };
   let categoria2: Categoria = Categoria.recuperar(propsCategoria);
   console.log(categoria2);
-  console.log(categoria.equals(categoria2));
 
   //////////////////////////////////////////////////////
   //Persistinto e Recuperando em Arquivo - File System//
   //////////////////////////////////////////////////////
 
   let arrayCategorias = [];
-  arrayCategorias.push(categoria.toDIO());
-  arrayCategorias.push(categoria2.toDIO());
+  arrayCategorias.push(categoria.toDTO());
+  arrayCategorias.push(categoria2.toDTO());
 
   writeFile(
     "categorias.json",
@@ -39,9 +38,9 @@ try {
     function (error: any) {
       if (error) throw error;
       console.log("Arquivo Salvo com Sucesso!");
-      readFile("categorias.json", (err, dadoGravadoArquivo) => {
+      readFile("categorias.json", (error, dadoGravadoArquivo) => {
         if (error) throw error;
-        console.log("Leitura de Arquivo");
+        console.log("Leitura de Arquivo!");
         let categoriasSalvas: [] = JSON.parse(dadoGravadoArquivo.toString());
         categoriasSalvas.forEach((categoriaJSON) => {
           console.log(categoriaJSON);
@@ -52,65 +51,10 @@ try {
   );
 } catch (error: any) {
   if (error instanceof DomainException) {
-    console.log("Exceção de Domínio---------------------");
+    console.log("Execeção de Dóminio");
     console.log(error.message);
   } else {
-    console.log("Outras Exceções ----------------------");
-    console.log(error.message);
-  }
-} finally {
-  console.log(
-    "Ação que deve ser executada em caso de sucesso e em caso de exceção"
-  );
-}
-
-try {
-  /////////////////////////
-  //Criando um Produto//
-  /////////////////////////
-
-  let cama = Categoria.criar({ nome: "cama" });
-  let mesa = Categoria.criar({ nome: " mesa " });
-  let banho = Categoria.criar({ nome: " banho" });
-
-  let produto: Produto;
-  produto = Produto.criar({
-    nome: "colcha",
-    preco: 80,
-    descricao: "",
-    categoria: [cama, mesa, banho],
-  });
-  console.log(produto);
-
-  //////////////////////////////////////////////////////
-  //Persistinto e Recuperando em Arquivo - File System//
-  //////////////////////////////////////////////////////
-
-  let arrayProduto = [];
-  arrayProduto.push(produto);
-
-  writeFile(
-    "produto.json",
-    JSON.stringify(arrayProduto),
-    function (error: any) {
-      if (error) throw error;
-      console.log("Arquivo Salvo com Sucesso!");
-      readFile("produto.json", (err, dadoGravadoArquivo) => {
-        if (error) throw error;
-        console.log("Leitura de Arquivo");
-        let produtoSalvo: [] = JSON.parse(dadoGravadoArquivo.toString());
-        produtoSalvo.forEach((produtoJSON) => {
-          console.log(produtoJSON);
-        });
-      });
-    }
-  );
-} catch (error: any) {
-  if (error instanceof DomainException) {
-    console.log("Exceção de Domínio---------------------");
-    console.log(error.message);
-  } else {
-    console.log("Outras Exceções ----------------------");
+    console.log("Outras Exceções");
     console.log(error.message);
   }
 } finally {

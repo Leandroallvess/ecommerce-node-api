@@ -28,6 +28,7 @@
   "author": "Leandro Alves",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@types/node": "^20.2.5",
     "sucrase": "^3.32.0",
     "typescript": "^5.1.3"

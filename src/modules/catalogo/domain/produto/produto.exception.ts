@@ -1,28 +1,18 @@
-import { DomainException } from "../../../../shered/domain/DomainException";
+import { DomainException } from "shared/domain/DomainException";
 
 class ProdutoException extends DomainException {
-  public constructor(
+  constructor(
     message: string = "⚠️ Exceção de Domínio Genérica da Entidade Produto"
   ) {
     super(message);
-    this.name = "ProduroException";
-    this.message = message;
-  }
-}
-
-class NomeProdutoNuloOuIndefinido extends ProdutoException {
-  public constructor(
-    message: string = "⚠️ O nome da produto é nulo ou indefinido."
-  ) {
-    super(message);
-    this.name = "NomeProdutoNuloOuIndefinido";
+    this.name = "ProdutoException";
     this.message = message;
   }
 }
 
 class NomeProdutoTamanhoMinimoInvalido extends ProdutoException {
   public constructor(
-    message: string = "⚠️ O nome da produto não possui um tamanho mínimo válido."
+    message: string = "⚠️ O nome do produto não possui um tamanho mínimo válido."
   ) {
     super(message);
     this.name = "NomeProdutoTamanhoMinimoInvalido";
@@ -32,7 +22,7 @@ class NomeProdutoTamanhoMinimoInvalido extends ProdutoException {
 
 class NomeProdutoTamanhoMaximoInvalido extends ProdutoException {
   public constructor(
-    message: string = "⚠️ O nome da produto não possui um tamanho máximo válido."
+    message: string = "⚠️ O nome do produto não possui um tamanho máximo válido."
   ) {
     super(message);
     this.name = "NomeProdutoTamanhoMaximoInvalido";
@@ -40,60 +30,63 @@ class NomeProdutoTamanhoMaximoInvalido extends ProdutoException {
   }
 }
 
-class PrecoInvalido extends ProdutoException {
-  public constructor(message: string = "Preço inválido") {
-    super(message);
-    this.name = "PrecoInvalido";
-    this.message = message;
-  }
-}
-
-class DescricaoNulo extends ProdutoException {
-  public constructor(message: string = "A descrição não pode ser nula") {
-    super(message);
-    this.name = "DescricaoNula";
-    this.message = message;
-  }
-}
-
-class NomeDescricaoTamanhoMinimoInvalido extends ProdutoException {
+class DescricaoProdutoTamanhoMinimoInvalido extends ProdutoException {
   public constructor(
-    message: string = "A descrição não tem tamanho minímo válido"
+    message: string = "⚠️ A descrição do produto não possui um tamanho mínimo válido."
   ) {
     super(message);
-    this.name = "NomeDescricaoTamanhoMinimoInvalido";
+    this.name = "DescricaoProdutoTamanhoMinimoInvalido";
     this.message = message;
   }
 }
 
-class NomeDescricaoTamanhoMaximoInvalido extends ProdutoException {
+class DescricaoProdutoTamanhoMaximoInvalido extends ProdutoException {
   public constructor(
-    message: string = "A descrição não tem tamanho maximo válido"
+    message: string = "⚠️ A descrição do produto não possui um tamanho máximo válido."
   ) {
     super(message);
-    this.name = "NomeDescricaoTamanhoMaximoInvalido";
+    this.name = "DescricaoProdutoTamanhoMaximoInvalido";
     this.message = message;
   }
 }
 
-class NumeroCategoriaInvalido extends ProdutoException {
+class ValorMinimoProdutoInvalido extends ProdutoException {
   public constructor(
-    message: string = "O numero de categoria deve conter entre uma e três"
+    message: string = "⚠️ O valor mínimo do produto é inválido."
   ) {
     super(message);
-    this.name = "NumeroCategoriaInvalido";
+    this.name = "ValorMinimoProdutoInvalido";
+    this.message = message;
+  }
+}
+
+class QtdMinimaCategoriasProdutoInvalida extends ProdutoException {
+  public constructor(
+    message: string = "⚠️ A quantidade mínima de categorias produto é inválida."
+  ) {
+    super(message);
+    this.name = "QtdMinimaCategoriasProdutoInvalida";
+    this.message = message;
+  }
+}
+
+class QtdMaximaCategoriasProdutoInvalida extends ProdutoException {
+  public constructor(
+    message: string = "⚠️ A quantidade mínima de categorias do produto é inválida."
+  ) {
+    super(message);
+    this.name = "QtdMinimaCategoriasProdutoInvalida";
     this.message = message;
   }
 }
 
 export {
   ProdutoException,
-  NomeProdutoNuloOuIndefinido,
   NomeProdutoTamanhoMinimoInvalido,
   NomeProdutoTamanhoMaximoInvalido,
-  NomeDescricaoTamanhoMinimoInvalido,
-  NomeDescricaoTamanhoMaximoInvalido,
-  DescricaoNulo,
-  NumeroCategoriaInvalido,
-  PrecoInvalido,
+  DescricaoProdutoTamanhoMinimoInvalido,
+  DescricaoProdutoTamanhoMaximoInvalido,
+  ValorMinimoProdutoInvalido,
+  QtdMinimaCategoriasProdutoInvalida,
+  QtdMaximaCategoriasProdutoInvalida,
 };

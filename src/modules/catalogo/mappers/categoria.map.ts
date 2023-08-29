@@ -5,7 +5,7 @@ import {
 } from "../domain/categoria/categoria.types";
 
 class CategoriaMap {
-  public static toDIO(categoria: Categoria): ICategoria {
+  public static toDTO(categoria: Categoria): ICategoria {
     return {
       id: categoria.id,
       nome: categoria.nome,

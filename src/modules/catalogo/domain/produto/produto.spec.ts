@@ -1,155 +1,218 @@
-import { describe, test, expect } from "vitest";
-import { CriarProdutoProps } from "../produto/produto.types";
+import { faker } from "@faker-js/faker";
+import { beforeAll, describe, expect, test } from "vitest";
 import { Categoria } from "../categoria/categoria.entity";
+import { Produto } from "./produto.entity";
 import {
+  DescricaoProdutoTamanhoMaximoInvalido,
+  DescricaoProdutoTamanhoMinimoInvalido,
   NomeProdutoTamanhoMaximoInvalido,
   NomeProdutoTamanhoMinimoInvalido,
-  NumeroCategoriaInvalido,
-  PrecoInvalido,
-  NomeDescricaoTamanhoMaximoInvalido,
-  NomeDescricaoTamanhoMinimoInvalido,
+  QtdMaximaCategoriasProdutoInvalida,
+  QtdMinimaCategoriasProdutoInvalida,
+  ValorMinimoProdutoInvalido,
 } from "./produto.exception";
-import { Produto } from "./produto.entity";
+import { CriarProdutoProps } from "./produto.types";
 
-describe("Entidade de Dominio da Produto", () => {
-  test("Deve Criar um Produto Válido", async () => {
-    const categoria = Categoria.criar({ nome: "cama, mesa e banho" });
+let nomeProdutoValido: string;
+let nomeProdutoTamanhoMinInvalido: string;
+let nomeProdutoTamanhoMaxInvalido: string;
+let descricaoProdutoValido: string;
+let descricaoProdutoTamanhoMinInvalido: string;
+let descricaoProdutoTamanhoMaxInvalido: string;
+let valorProdutoValido: number;
+let valorMinProdutoInvalido: number;
+let categoriasValidas: Array<Categoria>;
+let categoriasQtdMinInvalidas: Array<Categoria>;
+let categoriasQtdMaxInvalidas: Array<Categoria>;
 
+//Chamado uma vez antes de iniciar a execução de todos os testes no contexto atual.
+beforeAll(async () => {
+  //Preencendo as variáveis com dados em conformidade com as restrições da regra de negócio para o nome do produto
+  nomeProdutoValido = faker.string.alpha({ length: { min: 5, max: 50 } });
+  nomeProdutoTamanhoMinInvalido = faker.string.alpha({
+    length: { min: 0, max: 4 },
+  });
+  nomeProdutoTamanhoMaxInvalido = faker.string.alpha({
+    length: { min: 51, max: 51 },
+  });
+
+  //Preencendo as variáveis com dados em conformidade com as restrições da regra de negócio para a descrição do produto
+  descricaoProdutoValido = faker.string.alpha({
+    length: { min: 10, max: 200 },
+  });
+  descricaoProdutoTamanhoMinInvalido = faker.string.alpha({
+    length: { min: 0, max: 9 },
+  });
+  descricaoProdutoTamanhoMaxInvalido = faker.string.alpha({
+    length: { min: 201, max: 201 },
+  });
+
+  //Preencendo as variáveis com dados em conformidade com as restrições da regra de negócio para o valor do produto
+  valorProdutoValido = faker.number.int({ min: 1, max: 2000 });
+  valorMinProdutoInvalido = faker.number.int({ min: -10, max: 0 });
+
+  //Preencendo um array de categorias válido com dados simulados
+  const categoriaValida01 = Categoria.criar({
+    nome: faker.string.alpha({ length: { min: 3, max: 50 } }),
+  });
+  const categoriaValida02 = Categoria.criar({
+    nome: faker.string.alpha({ length: { min: 3, max: 50 } }),
+  });
+  const categoriaValida03 = Categoria.criar({
+    nome: faker.string.alpha({ length: { min: 3, max: 50 } }),
+  });
+  const categoriaValida04 = Categoria.criar({
+    nome: faker.string.alpha({ length: { min: 3, max: 50 } }),
+  });
+  categoriasValidas = faker.helpers.arrayElements<Categoria>(
+    [categoriaValida01, categoriaValida02, categoriaValida03],
+    { min: 1, max: 3 }
+  );
+  categoriasQtdMinInvalidas = [];
+  categoriasQtdMaxInvalidas = faker.helpers.arrayElements<Categoria>(
+    [
+      categoriaValida01,
+      categoriaValida02,
+      categoriaValida03,
+      categoriaValida04,
+    ],
+    { min: 4, max: 4 }
+  );
+});
+
+//Suite de Testes de Unidade - Entidade de Domínio
+//Usando o 'describe', você pode definir como um conjunto de testes ou benchmarks relacionados
+describe("Entidade de Domínio: Criar Produto", () => {
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Deve Criar Um Produto Válido", async () => {
+    //Dado (Given)
     const produtoValido: CriarProdutoProps = {
-      nome: "Colcha",
-      preco: 80,
-      descricao: "Bordada para cama box",
-      categoria: [categoria],
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoValido,
+      valor: valorProdutoValido,
+      categorias: categoriasValidas,
     };
 
+    //Quando (When) e Então (Then)
     expect(Produto.criar(produtoValido)).to.be.instanceof(Produto);
   });
 
-  // nome produto tamanho minimo < 5
-  test(" Nâo Deve Criar um Produto com Nome inVálida - tamanho minímo", async () => {
-    const categoria = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "ca",
-      preco: 80,
-      descricao: "lençol de cama box ",
-      categoria: [categoria],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Nome Inválido (Tamanho Mínimo)", async () => {
+    //Dado (Given)
+    //Nome menor que cinco caracteres
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoTamanhoMinInvalido,
+      descricao: descricaoProdutoValido,
+      valor: valorProdutoValido,
+      categorias: categoriasValidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
       NomeProdutoTamanhoMinimoInvalido
     );
   });
 
-  // nome produto tamanho maxímo > 50
-  test(" Nâo Deve Criar um Produto com Nome inVálida - tamanho maximo", async () => {
-    const categoria = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "jhdfjhdgljnsçaljdgnasjglflgkslfljkjkjkjkjkjkjkjkjkjkjklkjllllllllllllllllllllllllllllllllllllllllllllllllllllsssssssssssssssskkkkkkkkkk",
-      preco: 0,
-      descricao: "lençol de cama box",
-      categoria: [categoria],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Nome Inválido (Tamanho Máximo)", async () => {
+    //Dado (Given)
+    //Nome maior que cinquenta caracteres
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoTamanhoMaxInvalido,
+      descricao: descricaoProdutoValido,
+      valor: valorProdutoValido,
+      categorias: categoriasValidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
       NomeProdutoTamanhoMaximoInvalido
     );
   });
 
-  //categoria invalida < 1
-  test("Não deve criar categoria invalida - tamanho minimo", async () => {
-    const categoria = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol",
-      preco: 80,
-      descricao: "lençol de cama box",
-      categoria: [],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Descrição Inválida (Tamanho Mínimo)", async () => {
+    //Dado (Given)
+    //Descrição menor que dez caracteres
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoTamanhoMinInvalido,
+      valor: valorProdutoValido,
+      categorias: categoriasValidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
-      NumeroCategoriaInvalido
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
+      DescricaoProdutoTamanhoMinimoInvalido
     );
   });
 
-  //categoria invalida > 3
-  test("Não deve criar categoria invalida - tamanho maximo", async () => {
-    const capa = Categoria.criar({ nome: "cama, mesa e banho" });
-    const lencol = Categoria.criar({ nome: "cama, mesa e banho" });
-    const Colcha = Categoria.criar({ nome: "cama, mesa e banho" });
-    const almofada = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol",
-      preco: 100,
-      descricao: "lençol de cama box",
-      categoria: [capa, lencol, Colcha, almofada],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Descrição Inválida (Tamanho Máximo)", async () => {
+    //Dado (Given)
+    //Descrição maior que duzentos caracteres
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoTamanhoMaxInvalido,
+      valor: valorProdutoValido,
+      categorias: categoriasValidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
-      NumeroCategoriaInvalido
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
+      DescricaoProdutoTamanhoMaximoInvalido
     );
   });
 
-  //Descrição nula
-  test("Não deve criar descrição nula", async () => {
-    const capa = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol",
-      preco: 100,
-      descricao: "",
-      categoria: [capa],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Valor Mínimo Inválido", async () => {
+    //Dado (Given)
+    //Valor mínimo menor que 0
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoValido,
+      valor: valorMinProdutoInvalido,
+      categorias: categoriasValidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
-      NomeDescricaoTamanhoMinimoInvalido
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
+      ValorMinimoProdutoInvalido
     );
   });
 
-  //descrição maior quer 50
-  test("Não deve criar descrição maior quer 50", async () => {
-    const capa = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol",
-      preco: 100,
-      descricao:
-        " coma mesa banho, coma mesa banho, coma mesa banho, coma mesa banho, coma mesa banho, coma mesa banho,jhghf, hygtrdes vteses frs3a2a f5d3ss2 f4s3s2 fde3w s3s23 d3s32w,rdes2 ,gtrfed3, d4s3, tfrdes ,gfd3d3s,rese, rfrdes,tfrde, uhyg6",
-      categoria: [capa],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Número Mínimo de Categorias Inválido", async () => {
+    //Dado (Given)
+    //Nenhuma categoria é atribuida - menor que 1
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoValido,
+      valor: valorProdutoValido,
+      categorias: categoriasQtdMinInvalidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
-      NomeDescricaoTamanhoMaximoInvalido
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
+      QtdMinimaCategoriasProdutoInvalida
     );
   });
 
-  //descrição menor que 10
-  test("Não deve criar descrição menor que 10", async () => {
-    const capa = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol",
-      preco: 100,
-      descricao: "qwertyuio",
-      categoria: [capa],
+  //Teste define um conjunto de expectativas relacionadas.
+  test("Não Deve Criar Produto Com Número Máximo de Categorias Inválido", async () => {
+    //Dado (Given)
+    //4 categorias é atribuidas - maior que 3
+    const produtoNomeInvalido: CriarProdutoProps = {
+      nome: nomeProdutoValido,
+      descricao: descricaoProdutoValido,
+      valor: valorProdutoValido,
+      categorias: categoriasQtdMaxInvalidas,
     };
 
-    expect(() => Produto.criar(produtoInvalido)).toThrowError(
-      NomeDescricaoTamanhoMinimoInvalido
+    //Quando (When) e Então (Then)
+    expect(() => Produto.criar(produtoNomeInvalido)).toThrowError(
+      QtdMaximaCategoriasProdutoInvalida
     );
-  });
-
-  //valor
-  test("valor não deve ser menor que zero", async () => {
-    const capa = Categoria.criar({ nome: "cama, mesa e banho" });
-
-    const produtoInvalido: CriarProdutoProps = {
-      nome: "lençol bordado",
-      preco: -8,
-      descricao: " LençoldeCamaBox",
-      categoria: [capa],
-    };
   });
 });

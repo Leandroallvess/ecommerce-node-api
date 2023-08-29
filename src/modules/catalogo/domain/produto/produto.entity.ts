@@ -1,16 +1,20 @@
+import { Entity } from "shared/domain/entity";
+import { ProdutoMap } from "../../mappers/produto.map";
 import { Categoria } from "../categoria/categoria.entity";
 import {
-  DescricaoNulo,
-  NomeDescricaoTamanhoMaximoInvalido,
-  NomeDescricaoTamanhoMinimoInvalido,
-  NomeProdutoNuloOuIndefinido,
+  DescricaoProdutoTamanhoMaximoInvalido,
+  DescricaoProdutoTamanhoMinimoInvalido,
   NomeProdutoTamanhoMaximoInvalido,
   NomeProdutoTamanhoMinimoInvalido,
-  NumeroCategoriaInvalido,
-  PrecoInvalido,
+  QtdMaximaCategoriasProdutoInvalida,
+  QtdMinimaCategoriasProdutoInvalida,
+  ValorMinimoProdutoInvalido,
 } from "./produto.exception";
-import { CriarProdutoProps, IProduto } from "./produto.types";
-import { Entity } from "../../../../shered/domain/entity";
+import {
+  CriarProdutoProps,
+  IProduto,
+  RecuperarProdutoProps,
+} from "./produto.types";
 
 class Produto extends Entity<IProduto> implements IProduto {
   ///////////////////////
@@ -18,9 +22,9 @@ class Produto extends Entity<IProduto> implements IProduto {
   ///////////////////////
 
   private _nome: string;
-  private _preco: number;
   private _descricao: string;
-  private _categoria: Categoria[];
+  private _valor: number;
+  private _categorias: Array<Categoria>;
 
   ///////////////
   //Gets e Sets//
@@ -31,10 +35,6 @@ class Produto extends Entity<IProduto> implements IProduto {
   }
 
   private set nome(value: string) {
-    if (value === null || value === undefined) {
-      throw new NomeProdutoNuloOuIndefinido();
-    }
-
     if (value.trim().length < 5) {
       throw new NomeProdutoTamanhoMinimoInvalido();
     }
@@ -46,61 +46,82 @@ class Produto extends Entity<IProduto> implements IProduto {
     this._nome = value;
   }
 
-  public get preco(): number {
-    return this._preco;
-  }
-  private set preco(value: number) {
-    if (value < 0) {
-      throw new PrecoInvalido();
-    }
-    this._preco = value;
-  }
-
   public get descricao(): string {
     return this._descricao;
   }
+
   private set descricao(value: string) {
-    if (value == null || value == undefined) {
-      throw new DescricaoNulo();
+    if (value.trim().length < 10) {
+      throw new DescricaoProdutoTamanhoMinimoInvalido();
     }
-    if (value.length < 10) {
-      throw new NomeDescricaoTamanhoMinimoInvalido();
+
+    if (value.trim().length > 200) {
+      throw new DescricaoProdutoTamanhoMaximoInvalido();
     }
-    if (value.length > 200) {
-      throw new NomeDescricaoTamanhoMaximoInvalido();
-    }
+
     this._descricao = value;
   }
 
-  public get categoria(): Categoria[] {
-    return this._categoria;
+  public get valor(): number {
+    return this._valor;
   }
-  private set categoria(value: Categoria[]) {
-    if (value.length < 1 || value.length > 3) {
-      throw new NumeroCategoriaInvalido();
+
+  private set valor(value: number) {
+    if (value < 0) {
+      throw new ValorMinimoProdutoInvalido();
     }
-    this._categoria = value;
+
+    this._valor = value;
+  }
+
+  public get categorias(): Array<Categoria> {
+    return this._categorias;
+  }
+
+  private set categorias(value: Array<Categoria>) {
+    if (value.length < 1) {
+      throw new QtdMinimaCategoriasProdutoInvalida();
+    }
+
+    if (value.length > 3) {
+      throw new QtdMaximaCategoriasProdutoInvalida();
+    }
+
+    this._categorias = value;
   }
 
   //////////////
   //Construtor//
   //////////////
 
-  private constructor(props: IProduto) {
-    super(props.id);
-    this.nome = props.nome;
-    this._preco = props.preco;
-    this.categoria = props.categoria;
-    this.descricao = props.descricao;
+  private constructor(produto: IProduto) {
+    super(produto.id);
+    this.nome = produto.nome;
+    this.descricao = produto.descricao;
+    this.valor = produto.valor;
+    this.categorias = produto.categorias;
   }
+  preco: number;
+  categoria: Categoria[];
 
   /////////////////////////
   //Static Factory Method//
   /////////////////////////
 
   public static criar(props: CriarProdutoProps): Produto {
-    let { nome, preco, categoria, descricao } = props;
-    return new Produto({ nome, preco, categoria, descricao });
+    return new Produto(props);
+  }
+
+  public static recuperar(props: RecuperarProdutoProps): Produto {
+    return new Produto(props);
+  }
+
+  ///////////
+  //Métodos//
+  ///////////
+
+  public toDTO(): IProduto {
+    return ProdutoMap.toDTO(this);
   }
 }
 
