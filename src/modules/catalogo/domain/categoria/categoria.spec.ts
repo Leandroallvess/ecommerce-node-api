@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { IDEntityUUIDInvalid } from "shared/domain/DomainException";
+import { IDEntityUUIDInvalid } from "@shared/domain/DomainException";
 import { beforeAll, describe, expect, test } from "vitest";
 import { Categoria } from "./categoria.entity";
 import {
@@ -77,7 +77,7 @@ describe("Entidade de Domínio: Categoria (Recuperar)", () => {
     //Nome menor que três caracteres
     const categoriaIdInvalido: RecuperarCategoriaProps = {
       id: UUIDInvalido,
-      nome: "cama",
+      nome: nomeCategoriaValido,
     };
 
     //Quando (When) e Então (Then)

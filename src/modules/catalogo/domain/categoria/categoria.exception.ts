@@ -1,7 +1,6 @@
-import { DomainException } from "shared/domain/DomainException";
-
+import { DomainException } from "@shared/domain/DomainException";
 class CategoriaException extends DomainException {
-  public constructor(
+  constructor(
     message: string = "⚠️ Exceção de Domínio Genérica da Entidade Categoria"
   ) {
     super(message);

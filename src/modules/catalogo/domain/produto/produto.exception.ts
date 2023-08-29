@@ -1,4 +1,4 @@
-import { DomainException } from "shared/domain/DomainException";
+import { DomainException } from "@shared/domain/DomainException";
 
 class ProdutoException extends DomainException {
   constructor(

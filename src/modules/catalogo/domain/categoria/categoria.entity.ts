@@ -1,5 +1,5 @@
 import { CategoriaMap } from "@modules/catalogo/mappers/categoria.map";
-import { Entity } from "shared/domain/entity";
+import { Entity } from "@shared/domain/entity";
 import {
   NomeCategoriaNuloOuIndefinido,
   NomeCategoriaTamanhoMaximoInvalido,
@@ -16,7 +16,7 @@ class Categoria extends Entity<ICategoria> implements ICategoria {
   //Atributos de Classe//
   ///////////////////////
 
-  private _nome: string = "";
+  private _nome: string;
 
   ///////////////
   //Gets e Sets//
@@ -63,6 +63,10 @@ class Categoria extends Entity<ICategoria> implements ICategoria {
   public static recuperar(props: RecuperarCategoriaProps): Categoria {
     return new Categoria(props);
   }
+
+  ///////////
+  //Métodos//
+  ///////////
 
   public toDTO(): ICategoria {
     return CategoriaMap.toDTO(this);

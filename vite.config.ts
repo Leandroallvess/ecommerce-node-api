@@ -14,7 +14,7 @@ export default defineConfig({
       },
       {
         find: "@shared",
-        replacement: path.resolve(__dirname, "src/shered"),
+        replacement: path.resolve(__dirname, "src/shared"),
       },
     ],
   },
